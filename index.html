@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ramzan Mubarak - Zoe</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #000428 0%, #004e92 100%);
+            font-family: 'Playfair Display', serif;
+            min-height: 100vh;
+        }
+
+        /* Golden Glitter Background */
+        .glitter-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #ffd700, transparent),
+                radial-gradient(2px 2px at 40px 70px, #ffed4e, transparent),
+                radial-gradient(1px 1px at 50px 90px, #ffa500, transparent),
+                radial-gradient(2px 2px at 80px 10px, #ffd700, transparent),
+                radial-gradient(1px 1px at 130px 80px, #ffed4e, transparent),
+                radial-gradient(2px 2px at 160px 120px, #ffd700, transparent);
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: glitter 3s linear infinite;
+            opacity: 0.8;
+            z-index: 0;
+        }
+
+        @keyframes glitter {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.9; }
+        }
+
+        /* Sparkle effect */
+        .sparkle {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: #ffd700;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #ffd700, 0 0 20px #ffed4e;
+            animation: sparkleAnim 2s infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes sparkleAnim {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        /* 3D Scene Container */
+        .scene {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1200px;
+            z-index: 100;
+            transition: opacity 0.5s ease, visibility 0.5s;
+            background: linear-gradient(135deg, #000428 0%, #004e92 100%);
+        }
+
+        .scene.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* Envelope Container */
+        .envelope-container {
+            width: 300px;
+            height: 200px;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: landEnvelope 2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            cursor: pointer;
+        }
+
+        @keyframes landEnvelope {
+            0% {
+                transform: translateY(-100vh) rotateX(45deg) rotateZ(-15deg) scale(0.5);
+                opacity: 0;
+            }
+            60% {
+                transform: translateY(30px) rotateX(5deg) rotateZ(2deg) scale(1.05);
+                opacity: 1;
+            }
+            80% {
+                transform: translateY(-15px) rotateX(-2deg) rotateZ(-1deg) scale(0.98);
+            }
+            100% {
+                transform: translateY(0) rotateX(0) rotateZ(0) scale(1);
+            }
+        }
+
+        /* The String/Thread */
+        .string {
+            position: absolute;
+            top: -80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 100px;
+            background: linear-gradient(to bottom, #ffd700, #ffed4e, #ffd700);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+            z-index: 1000;
+            animation: stringSway 3s ease-in-out infinite;
+            transform-origin: top center;
+        }
+
+        .string::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 12px;
+            background: radial-gradient(circle, #ffed4e, #ffd700);
+            border-radius: 50%;
+            box-shadow: 0 0 20px #ffd700;
+        }
+
+        @keyframes stringSway {
+            0%, 100% { transform: translateX(-50%) rotate(-3deg); }
+            50% { transform: translateX(-50%) rotate(3deg); }
+        }
+
+        /* Envelope Body */
+        .envelope {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .envelope-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+        }
+
+        /* Envelope Front */
+        .envelope-front {
+            background: linear-gradient(135deg, #001f3f 0%, #003366 50%, #001f3f 100%);
+            border: 3px solid #ffd700;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .envelope-front::before {
+            content: '✉';
+            font-size: 70px;
+            color: #ffd700;
+            text-shadow: 0 0 30px rgba(255,215,0,0.8);
+            animation: pulse 2s infinite;
+            filter: drop-shadow(0 0 10px #ffd700);
+        }
+
+        .envelope-front::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255,215,0,0.1) 50%,
+                transparent 70%
+            );
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px #ffd700); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 20px #ffd700); }
+        }
+
+        /* Envelope Back (Inside) */
+        .envelope-back {
+            background: linear-gradient(135deg, #000428 0%, #004e92 100%);
+            transform: rotateY(180deg);
+            z-index: 5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 3px solid #ffd700;
+        }
+
+        /* Flap */
+        .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(135deg, #003366 0%, #001f3f 100%);
+            clip-path: polygon(0 0, 50% 100%, 100% 0);
+            transform-origin: top;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 20;
+            border-top: 3px solid #ffd700;
+            border-left: 3px solid #ffd700;
+            border-right: 3px solid #ffd700;
+        }
+
+        /* Swipe Up Indicator */
+        .swipe-hint {
+            position: absolute;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ffd700;
+            font-family: 'Dancing Script', cursive;
+            font-size: 28px;
+            text-align: center;
+            opacity: 0;
+            animation: fadeInUp 1s ease 2s forwards;
+            pointer-events: none;
+            text-shadow: 0 0 10px rgba(255,215,0,0.5);
+            white-space: nowrap;
+        }
+
+        .swipe-hint::before {
+            content: '↑';
+            display: block;
+            font-size: 40px;
+            animation: bounce 1s infinite;
+            margin-bottom: 5px;
+            filter: drop-shadow(0 0 10px #ffd700);
+        }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* Open State */
+        .envelope-container.open .flap {
+            transform: rotateX(180deg);
+        }
+
+        .envelope-container.open .envelope {
+            transform: rotateY(180deg) translateZ(50px);
+        }
+
+        /* Main Content (Ramadan Page) - FIXED */
+        .main-content {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            z-index: 50;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.8s ease, visibility 0.8s;
+            background: linear-gradient(135deg, #000428 0%, #004e92 100%);
+        }
+
+        .main-content.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .content-wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Ramadan Title */
+        .title-container {
+            text-align: center;
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: translateY(-30px);
+            transition: all 1s ease 0.3s;
+        }
+
+        .main-content.show .title-container {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .title {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(3rem, 10vw, 6rem);
+            background: linear-gradient(45deg, #ffd700, #ffed4e, #ffa500, #ffd700);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease infinite;
+            filter: drop-shadow(0 0 20px rgba(255,215,0,0.6));
+            line-height: 1.2;
+            margin-bottom: 10px;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .subtitle {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            color: #ffd700;
+            font-family: 'Dancing Script', cursive;
+            text-shadow: 0 0 20px rgba(255,215,0,0.5);
+        }
+
+        /* Prayers Container */
+        .prayers-wrapper {
+            width: 100%;
+            max-width: 800px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease 0.6s;
+        }
+
+        .main-content.show .prayers-wrapper {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .prayers-container {
+            background: rgba(0, 31, 63, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 40px;
+            border: 2px solid rgba(255,215,0,0.5);
+            box-shadow: 
+                0 0 50px rgba(255,215,0,0.2),
+                inset 0 0 50px rgba(255,215,0,0.05);
+        }
+
+        .prayer-item {
+            font-style: italic;
+            color: #ffffff;
+            font-size: clamp(1rem, 2.5vw, 1.3rem);
+            line-height: 1.8;
+            margin-bottom: 25px;
+            padding: 20px;
+            border-left: 4px solid #ffd700;
+            background: linear-gradient(90deg, rgba(255,215,0,0.15), transparent);
+            border-radius: 0 15px 15px 0;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .prayer-item:hover {
+            transform: translateX(5px);
+            background: linear-gradient(90deg, rgba(255,215,0,0.25), transparent);
+        }
+
+        .prayer-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .prayer-text {
+            flex: 1;
+        }
+
+        /* Confetti Canvas */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1000;
+        }
+
+        /* Moon Decoration */
+        .moon {
+            position: fixed;
+            top: 40px;
+            right: 40px;
+            width: 80px;
+            height: 80px;
+            background: transparent;
+            border-radius: 50%;
+            box-shadow: -20px 10px 0 5px #ffd700;
+            opacity: 0;
+            transition: opacity 1s ease 0.5s;
+            z-index: 5;
+            filter: drop-shadow(0 0 20px rgba(255,215,0,0.6));
+            animation: moonFloat 6s ease-in-out infinite;
+        }
+
+        .main-content.show .moon {
+            opacity: 0.9;
+        }
+
+        @keyframes moonFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* Stars decoration */
+        .star-dec {
+            position: fixed;
+            color: #ffd700;
+            font-size: 24px;
+            opacity: 0;
+            animation: twinkleStar 2s infinite;
+            z-index: 5;
+            text-shadow: 0 0 10px #ffd700;
+            transition: opacity 1s ease;
+        }
+
+        .main-content.show .star-dec {
+            opacity: 0.8;
+        }
+
+        @keyframes twinkleStar {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .envelope-container {
+                width: 260px;
+                height: 170px;
+            }
+            .prayers-container {
+                padding: 25px;
+            }
+            .moon {
+                width: 50px;
+                height: 50px;
+                top: 20px;
+                right: 20px;
+            }
+            .content-wrapper {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Golden Glitter Background -->
+    <div class="glitter-bg"></div>
+    
+    <!-- Dynamic sparkles -->
+    <div id="sparkles-container"></div>
+
+    <!-- Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- 3D Envelope Scene -->
+    <div class="scene" id="scene">
+        <div class="envelope-container" id="envelope">
+            <div class="string"></div>
+            <div class="envelope">
+                <div class="envelope-face envelope-front"></div>
+                <div class="envelope-face envelope-back">
+                    <div style="color: #ffd700; font-size: 80px; filter: drop-shadow(0 0 20px #ffd700);">🌙</div>
+                </div>
+                <div class="flap"></div>
+            </div>
+            <div class="swipe-hint">Swipe Up to Open</div>
+        </div>
+    </div>
+
+    <!-- Main Content (Ramadan Page) -->
+    <div class="main-content" id="mainContent">
+        <!-- Moon -->
+        <div class="moon"></div>
+        
+        <!-- Decorative Stars -->
+        <div class="star-dec" style="top: 15%; left: 10%; animation-delay: 0s;">✨</div>
+        <div class="star-dec" style="top: 25%; right: 15%; animation-delay: 0.5s;">⭐</div>
+        <div class="star-dec" style="bottom: 20%; left: 8%; animation-delay: 1s;">✨</div>
+        <div class="star-dec" style="top: 60%; right: 10%; animation-delay: 1.5s;">⭐</div>
+        <div class="star-dec" style="bottom: 30%; right: 20%; animation-delay: 2s;">✨</div>
+
+        <div class="content-wrapper">
+            <div class="title-container">
+                <h1 class="title">Ramadan Mubarak</h1>
+                <p class="subtitle">Zoe ✨</p>
+            </div>
+            
+            <div class="prayers-wrapper">
+                <div class="prayers-container">
+                    <div class="prayer-item">
+                        <span class="prayer-icon">🤲</span>
+                        <span class="prayer-text"><em>"May Allah grant your parents excellent health and long lives filled with happiness and blessings. May they always be surrounded by love and joy."</em></span>
+                    </div>
+                    
+                    <div class="prayer-item">
+                        <span class="prayer-icon">🌟</span>
+                        <span class="prayer-text"><em>"Wishing you endless success in every step you take and every dream you pursue. May your hard work always be rewarded with magnificent achievements."</em></span>
+                    </div>
+                    
+                    <div class="prayer-item">
+                        <span class="prayer-icon">🤝</span>
+                        <span class="prayer-text"><em>"May Allah ease every difficulty and bless our journey together in every endeavor we undertake. May we always find strength in unity and support."</em></span>
+                    </div>
+                    
+                    <div class="prayer-item">
+                        <span class="prayer-icon">🛡️</span>
+                        <span class="prayer-text"><em>"Protect us from all evils and negative influences, keeping our hearts pure and intentions noble. Shield us from harm and guide us towards righteousness."</em></span>
+                    </div>
+                    
+                    <div class="prayer-item">
+                        <span class="prayer-icon">❤️</span>
+                        <span class="prayer-text"><em>"May this holy month strengthen our bond and fill our lives with peace, love, and prosperity. May our friendship grow deeper with each passing day."</em></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create dynamic sparkles
+        function createSparkles() {
+            const container = document.getElementById('sparkles-container');
+            for (let i = 0; i < 40; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.animationDelay = Math.random() * 2 + 's';
+                sparkle.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                container.appendChild(sparkle);
+            }
+        }
+        createSparkles();
+
+        // Confetti Particle System
+        class ConfettiParticle {
+            constructor(canvas) {
+                this.canvas = canvas;
+                this.ctx = canvas.getContext('2d');
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height - canvas.height;
+                this.size = Math.random() * 10 + 5;
+                this.speedY = Math.random() * 3 + 2;
+                this.speedX = Math.random() * 2 - 1;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = Math.random() * 10 - 5;
+                this.color = this.getRandomColor();
+            }
+
+            getRandomColor() {
+                const colors = ['#ffd700', '#ffed4e', '#ffa500', '#ff8c00', '#ffff00', '#fff8dc'];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.rotation += this.rotationSpeed;
+                
+                if (this.y > this.canvas.height) {
+                    this.y = -20;
+                    this.x = Math.random() * this.canvas.width;
+                }
+            }
+
+            draw() {
+                this.ctx.save();
+                this.ctx.translate(this.x, this.y);
+                this.ctx.rotate(this.rotation * Math.PI / 180);
+                this.ctx.fillStyle = this.color;
+                this.ctx.fillRect(-this.size/2, -this.size/2, this.size, this.size);
+                this.ctx.restore();
+            }
+        }
+
+        // Confetti Manager
+        class ConfettiSystem {
+            constructor() {
+                this.canvas = document.getElementById('confetti-canvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.particles = [];
+                this.active = false;
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+            }
+
+            resize() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+
+            start() {
+                this.active = true;
+                this.particles = [];
+                for (let i = 0; i < 150; i++) {
+                    this.particles.push(new ConfettiParticle(this.canvas));
+                }
+                this.animate();
+            }
+
+            animate() {
+                if (!this.active) return;
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.particles.forEach(p => { p.update(); p.draw(); });
+                requestAnimationFrame(() => this.animate());
+            }
+
+            explode() {
+                for (let i = 0; i < 80; i++) {
+                    const p = new ConfettiParticle(this.canvas);
+                    p.x = this.canvas.width / 2;
+                    p.y = this.canvas.height / 2;
+                    p.speedY = (Math.random() - 0.5) * 20;
+                    p.speedX = (Math.random() - 0.5) * 20;
+                    this.particles.push(p);
+                }
+            }
+        }
+
+        const confetti = new ConfettiSystem();
+
+        // Envelope Interaction
+        const envelope = document.getElementById('envelope');
+        const mainContent = document.getElementById('mainContent');
+        const scene = document.getElementById('scene');
+        let isOpened = false;
+        let startY = 0;
+        let isDragging = false;
+
+        function openEnvelope() {
+            if (isOpened) return;
+            isOpened = true;
+
+            envelope.classList.add('open');
+            confetti.start();
+            confetti.explode();
+
+            setTimeout(() => {
+                scene.classList.add('hidden');
+                mainContent.classList.add('show');
+                setTimeout(() => confetti.explode(), 500);
+            }, 700);
+        }
+
+        // Event listeners
+        envelope.addEventListener('touchstart', (e) => { startY = e.touches[0].clientY; isDragging = true; }, {passive: false});
+        envelope.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            if (startY - e.touches[0].clientY > 50) { openEnvelope(); isDragging = false; }
+        }, {passive: false});
+        envelope.addEventListener('touchend', () => isDragging = false);
+        envelope.addEventListener('mousedown', (e) => { startY = e.clientY; isDragging = true; });
+        window.addEventListener('mouseup', (e) => {
+            if (!isDragging) return;
+            if (startY - e.clientY > 50) openEnvelope();
+            isDragging = false;
+        });
+        envelope.addEventListener('click', openEnvelope);
+        document.addEventListener('keydown', (e) => { if (e.code === 'Space' || e.code === 'Enter') openEnvelope(); });
+    </script>
+</body>
+</html>
